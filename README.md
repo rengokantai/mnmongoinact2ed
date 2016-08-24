@@ -215,3 +215,17 @@ rs.status()
 replSetGetStatus //js
 ```
 ######Failure modes and recovery
+clean failure, categorical failure(needs resync)  
+
+recover from failed node:To completely resync, start a mongod with an empty data directory on the failed node.  
+change uncoverable node address to new address. Assuing members[1] is not working 
+```
+config.members[1].host = "localhost:50000"
+```
+
+force refonfig
+```
+ rs.reconfig(config, {force: true})
+ ```
+ ######11.3.2. Write concern
+
