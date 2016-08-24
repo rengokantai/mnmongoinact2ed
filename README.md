@@ -188,4 +188,30 @@ When the primary can’t see a majority, it must step down.(become secondary)
 
 ######Commit and rollback
 In a rollback, all writes that were never replicated to a majority are undone.  
-They’re removed from both secondary’s oplog and the collection where reside.
+They’re removed from both secondary’s oplog and the collection where reside.  
+The reverted writes are stored in the rollback subdirectory.Check using
+```
+bsondump
+```
+######11.2.3. Administration
+config details.
+```
+settings.getLastErrorModes 
+settings.getLastErrorDefaults
+```
+
+lets start.
+```
+config = {_id: "ke", members: []}
+config.members.push({_id: 0, host: 'localhost:40000'})
+config.members.push({_id: 1, host: 'localhost:40001'})
+config.members.push({_id: 2, host: 'localhost:40002', arbiterOnly: true})
+db.runCommand({replSetInitiate: config});
+```
+Replica set states  
+GOOD state= 1,2,7  , or check with
+```
+rs.status()
+replSetGetStatus //js
+```
+######Failure modes and recovery
