@@ -146,3 +146,46 @@ alternative method: 1: ctrl+C 2: If run in bkg,
 ps aux | grep mongod.lock
 kill -3
 ```
+######11.2.2. How replication works
+rs.oplog
+```
+use local
+show collections
+db.oplog.rs.findOne({op: "i"})
+```
+changed in 2,6, [update api](https://docs.mongodb.com/manual/reference/method/db.collection.update/)
+```
+db.collection.update(
+   <query>,
+   <update>,
+   {
+     upsert: <boolean>,
+     multi: <boolean>,
+     writeConcern: <document>
+   }
+)
+```
+check u(update) type of oplog
+```
+db.oplog.rs.find({op: "u"})
+```
+
+get latest entry
+```
+db.oplog.rs.find().sort({$natural: -1}) .limit(1)
+```
+some basic info about current status oplog
+```
+db.oplog.rs.find().sort({$natural: -1}) .limit(1)
+```
+assign oplogSize (1024MB)
+```
+mongod --replSet myapp --oplogSize 1024
+```
+######Heartbeat and failover
+rs.status() ->1 healthy,0 unresponsive  
+When the primary can’t see a majority, it must step down.(become secondary)  
+
+######Commit and rollback
+In a rollback, all writes that were never replicated to a majority are undone.  
+They’re removed from both secondary’s oplog and the collection where reside.
