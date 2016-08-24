@@ -225,7 +225,9 @@ config.members[1].host = "localhost:50000"
 
 force refonfig
 ```
- rs.reconfig(config, {force: true})
- ```
- ######11.3.2. Write concern
+rs.reconfig(config, {force: true})
+```
+######11.3.2. Write concern
 
+######11.3.3. Read scaling
+primary primaryPreferred secondary secondaryPreferred nearest
