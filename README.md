@@ -108,3 +108,41 @@ for config in "${configs[@]}"; do
   echo "Disk usage for $config: ${SIZE_MB}MB"2>&1
 done
 ```
+
+######Chapter 11. Replication
+create two nodes and 1 arbiter
+```
+mkdir ~/node1
+mkdir ~/node2
+mkdir ~/arbiter
+mongod --replSet myapp --dbpath ~/node1 --port 40000
+mongod --replSet myapp --dbpath ~/node2 --port 40001
+mongod --replSet myapp --dbpath ~/arbiter --port 40002
+mongo --port 40000
+rs.initiate()
+rs.add("localhost:40001")
+rs.addArb("localhost:40002") //3.0+
+db.isMaster() //get summary
+rs.status() //more detailed
+```
+if querying in secondary, must run slaveOk() first
+```
+rs.slaveOk()
+```
+one time slaveOk execution  
+[see here](http://stackoverflow.com/questions/33366182/how-to-set-rs-slaveok-in-secondary-mongodb-servers-in-replicaset-via-commandli)
+```
+mongo.exe --port 40000 --eval "rs.slaveOk()" --shell
+```
+
+leave current node from replSet
+```
+mongo --port 40000
+use admin
+db.shutdownServer()
+```
+alternative method: 1: ctrl+C 2: If run in bkg,
+```
+ps aux | grep mongod.lock
+kill -3
+```
